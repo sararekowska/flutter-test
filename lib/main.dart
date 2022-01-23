@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:english_words/english_words.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -10,15 +9,48 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Welcome to Flutter'),
-        ),
-        body: const Center(
-          child: Text('Hello World'),
-        ),
-      ),
+      theme: ThemeData(primarySwatch: Colors.pink),
+      home: const RandomWords()
+      );
+  }
+}
+
+class RandomWords extends StatefulWidget {
+  const RandomWords({Key? key}) : super(key: key);
+
+  @override
+  RandomWordsState createState() => RandomWordsState();
+}
+
+class RandomWordsState extends State<RandomWords> {
+  final _randomWordPairs = <WordPair>[];
+
+  Widget _buildList() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemBuilder: (context, item) {
+        if(item.isOdd) return const Divider();
+
+        final index = item ~/ 2;
+
+        if(index >= _randomWordPairs.length) {
+          _randomWordPairs.addAll(generateWordPairs().take(10));
+        }
+
+        return _buildRow(_randomWordPairs[index]);
+      }
+    );
+  }
+
+  Widget _buildRow(WordPair pair) {
+    return ListTile(title: Text(pair.asPascalCase, style: const TextStyle
+    (fontSize: 19.0)));
+  }
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: const Text("Wordpair Generator")),
+        body: _buildList()
     );
   }
 }
